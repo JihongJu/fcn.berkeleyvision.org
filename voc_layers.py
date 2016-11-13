@@ -66,6 +66,8 @@ class VOCSegDataLayer(caffe.Layer):
         # load image + label image pair
         self.data = self.load_image(self.indices[self.idx])
         self.label = self.load_label(self.indices[self.idx])
+        # obfuscated label image
+        self.label = self.obfuscate_label(self.label)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -113,6 +115,13 @@ class VOCSegDataLayer(caffe.Layer):
         im = Image.open('{}/SegmentationClass/{}.png'.format(self.voc_dir, idx))
         label = np.array(im, dtype=np.uint8)
         label = label[np.newaxis, ...]
+        return label
+
+    def obfuscate_label(self, label):
+        """
+        Obfuscate label image with only two classes: foreground and background
+        """
+        label[np.all([label != 0, label != 255], axis=0)] = 1
         return label
 
 
@@ -181,6 +190,8 @@ class SBDDSegDataLayer(caffe.Layer):
         # load image + label image pair
         self.data = self.load_image(self.indices[self.idx])
         self.label = self.load_label(self.indices[self.idx])
+        # obfuscated label image
+        self.label = self.obfuscate_label(self.label)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -230,3 +241,13 @@ class SBDDSegDataLayer(caffe.Layer):
         label = mat['GTcls'][0]['Segmentation'][0].astype(np.uint8)
         label = label[np.newaxis, ...]
         return label
+
+
+    def obfuscate_label(self, label):
+        """
+        Obfuscate label image with only two classes: foreground and background
+        """
+        label[np.all([label != 0, label != 255], axis=0)] = 1
+        return label
+
+
