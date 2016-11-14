@@ -55,11 +55,11 @@ def fcn(split):
     n.fc7, n.relu7 = conv_relu(n.drop6, 4096, ks=1, pad=0)
     n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)
 
-    n.score_fr = L.Convolution(n.drop7, num_output=21, kernel_size=1, pad=0,
+    n.score_fr = L.Convolution(n.drop7, num_output=3, kernel_size=1, pad=0,
         weight_filler=dict(type='xavier'),
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.upscore2 = L.Deconvolution(n.score_fr,
-        convolution_param=dict(num_output=21, kernel_size=4, stride=2,
+        convolution_param=dict(num_output=3, kernel_size=4, stride=2,
             weight_filler=dict(type='xavier'),
             bias_term=False),
         param=[dict(lr_mult=0)])
@@ -67,14 +67,14 @@ def fcn(split):
     # scale pool4 skip for compatibility
     n.scale_pool4 = L.Scale(n.pool4, filler=dict(type='constant',
         value=0.01), param=[dict(lr_mult=0)])
-    n.score_pool4 = L.Convolution(n.scale_pool4, num_output=21, kernel_size=1, pad=0,
+    n.score_pool4 = L.Convolution(n.scale_pool4, num_output=3, kernel_size=1, pad=0,
         weight_filler=dict(type='xavier'),
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.score_pool4c = crop(n.score_pool4, n.upscore2)
     n.fuse_pool4 = L.Eltwise(n.upscore2, n.score_pool4c,
             operation=P.Eltwise.SUM)
     n.upscore_pool4 = L.Deconvolution(n.fuse_pool4,
-        convolution_param=dict(num_output=21, kernel_size=4, stride=2,
+        convolution_param=dict(num_output=3, kernel_size=4, stride=2,
             weight_filler=dict(type='xavier'),
             bias_term=False),
         param=[dict(lr_mult=0)])
@@ -82,14 +82,14 @@ def fcn(split):
     # scale pool3 skip for compatibility
     n.scale_pool3 = L.Scale(n.pool3, filler=dict(type='constant',
         value=0.0001), param=[dict(lr_mult=0)])
-    n.score_pool3 = L.Convolution(n.scale_pool3, num_output=21, kernel_size=1, pad=0,
+    n.score_pool3 = L.Convolution(n.scale_pool3, num_output=3, kernel_size=1, pad=0,
         weight_filler=dict(type='xavier'),
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.score_pool3c = crop(n.score_pool3, n.upscore_pool4)
     n.fuse_pool3 = L.Eltwise(n.upscore_pool4, n.score_pool3c,
             operation=P.Eltwise.SUM)
     n.upscore8 = L.Deconvolution(n.fuse_pool3,
-        convolution_param=dict(num_output=21, kernel_size=16, stride=8,
+        convolution_param=dict(num_output=3, kernel_size=16, stride=8,
             weight_filler=dict(type='xavier'),
             bias_term=False),
         param=[dict(lr_mult=0)])
