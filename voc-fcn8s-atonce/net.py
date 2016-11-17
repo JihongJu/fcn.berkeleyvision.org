@@ -5,7 +5,6 @@ from caffe.coord_map import crop
 def conv_relu(bottom, nout, ks=3, stride=1, pad=1):
     conv = L.Convolution(bottom, kernel_size=ks, stride=stride,
         num_output=nout, pad=pad,
-        weight_filler=dict(type='xavier'),
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     return conv, L.ReLU(conv, in_place=True)
 
@@ -17,10 +16,10 @@ def fcn(split):
     pydata_params = dict(split=split, mean=(104.00699, 116.66877, 122.67892),
             seed=1337)
     if split == 'train':
-        pydata_params['voc_dir'] = '../data/pascal-obfuscated/VOC2011'
-        pylayer = 'VOCSegDataLayer'
+        pydata_params['sbdd_dir'] = '../data/sbdd/dataset'
+        pylayer = 'SBDDSegDataLayer'
     else:
-        pydata_params['voc_dir'] = '../data/pascal-obfuscated/VOC2011'
+        pydata_params['voc_dir'] = '../data/pascal/VOC2011'
         pylayer = 'VOCSegDataLayer'
     n.data, n.label = L.Python(module='voc_layers', layer=pylayer,
             ntop=2, param_str=str(pydata_params))
@@ -55,42 +54,36 @@ def fcn(split):
     n.fc7, n.relu7 = conv_relu(n.drop6, 4096, ks=1, pad=0)
     n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)
 
-    n.score_fr = L.Convolution(n.drop7, num_output=3, kernel_size=1, pad=0,
-        weight_filler=dict(type='xavier'),
+    n.score_fr = L.Convolution(n.drop7, num_output=21, kernel_size=1, pad=0,
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.upscore2 = L.Deconvolution(n.score_fr,
-        convolution_param=dict(num_output=3, kernel_size=4, stride=2,
-            weight_filler=dict(type='xavier'),
+        convolution_param=dict(num_output=21, kernel_size=4, stride=2,
             bias_term=False),
         param=[dict(lr_mult=0)])
 
     # scale pool4 skip for compatibility
     n.scale_pool4 = L.Scale(n.pool4, filler=dict(type='constant',
         value=0.01), param=[dict(lr_mult=0)])
-    n.score_pool4 = L.Convolution(n.scale_pool4, num_output=3, kernel_size=1, pad=0,
-        weight_filler=dict(type='xavier'),
+    n.score_pool4 = L.Convolution(n.scale_pool4, num_output=21, kernel_size=1, pad=0,
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.score_pool4c = crop(n.score_pool4, n.upscore2)
     n.fuse_pool4 = L.Eltwise(n.upscore2, n.score_pool4c,
             operation=P.Eltwise.SUM)
     n.upscore_pool4 = L.Deconvolution(n.fuse_pool4,
-        convolution_param=dict(num_output=3, kernel_size=4, stride=2,
-            weight_filler=dict(type='xavier'),
+        convolution_param=dict(num_output=21, kernel_size=4, stride=2,
             bias_term=False),
         param=[dict(lr_mult=0)])
 
     # scale pool3 skip for compatibility
     n.scale_pool3 = L.Scale(n.pool3, filler=dict(type='constant',
         value=0.0001), param=[dict(lr_mult=0)])
-    n.score_pool3 = L.Convolution(n.scale_pool3, num_output=3, kernel_size=1, pad=0,
-        weight_filler=dict(type='xavier'),
+    n.score_pool3 = L.Convolution(n.scale_pool3, num_output=21, kernel_size=1, pad=0,
         param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])
     n.score_pool3c = crop(n.score_pool3, n.upscore_pool4)
     n.fuse_pool3 = L.Eltwise(n.upscore_pool4, n.score_pool3c,
             operation=P.Eltwise.SUM)
     n.upscore8 = L.Deconvolution(n.fuse_pool3,
-        convolution_param=dict(num_output=3, kernel_size=16, stride=8,
-            weight_filler=dict(type='xavier'),
+        convolution_param=dict(num_output=21, kernel_size=16, stride=8,
             bias_term=False),
         param=[dict(lr_mult=0)])
 

@@ -1,6 +1,8 @@
 data
 */snapshot
 *.caffemodel
+*.solversate
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
