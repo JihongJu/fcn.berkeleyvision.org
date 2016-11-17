@@ -19,6 +19,7 @@ snapshot_prefix = 'obfuscated_training_with_vgg16_snapshot'
 solverstates = [os.path.join(snapshot_prefix, ss)
         for ss in os.listdir(snapshot_prefix)
         if ss.endswith('.solverstate')]
+solverstates.sort()
 
 # scoring
 train = np.loadtxt('../data/pascal-obfuscated/VOC2011/ImageSets/Segmentation/train.txt', dtype=str)
@@ -26,5 +27,5 @@ val = np.loadtxt('../data/pascal-obfuscated/seg11valid.txt', dtype=str)
 
 for ss in solverstates:
     solver.restore(ss)
-    score.seg_tests(solver, False, train, layer='score')
+    score.seg_trains(solver, False, train, layer='score')
     score.seg_tests(solver, False, val, layer='score')
