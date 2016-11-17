@@ -66,8 +66,6 @@ class VOCSegDataLayer(caffe.Layer):
         # load image + label image pair
         self.data = self.load_image(self.indices[self.idx])
         self.label = self.load_label(self.indices[self.idx])
-        # obfuscated label image
-        self.label = self.obfuscate_label(self.label)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -116,6 +114,23 @@ class VOCSegDataLayer(caffe.Layer):
         label = np.array(im, dtype=np.uint8)
         label = label[np.newaxis, ...]
         return label
+
+
+class ObfVOCSegDataLayer(VOCSegDataLayer):
+    """
+    Obfuscating the class labels for the VOC dataset
+    """
+
+    def reshape(self, bottom, top):
+        # load image + label image pair
+        self.data = self.load_image(self.indices[self.idx])
+        self.label = self.load_label(self.indices[self.idx])
+        # obfuscated label image
+        self.label = self.obfuscate_label(self.label)
+        # reshape tops to fit (leading 1 is for batch dimension)
+        top[0].reshape(1, *self.data.shape)
+        top[1].reshape(1, *self.label.shape)
+
 
     def obfuscate_label(self, label):
         """
@@ -190,8 +205,6 @@ class SBDDSegDataLayer(caffe.Layer):
         # load image + label image pair
         self.data = self.load_image(self.indices[self.idx])
         self.label = self.load_label(self.indices[self.idx])
-        # obfuscated label image
-        self.label = self.obfuscate_label(self.label)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -241,6 +254,22 @@ class SBDDSegDataLayer(caffe.Layer):
         label = mat['GTcls'][0]['Segmentation'][0].astype(np.uint8)
         label = label[np.newaxis, ...]
         return label
+
+
+class ObfSBDDSegDataLayer(SBDDSegDataLayer):
+    """
+    Obfuscate the class labels for the SBDD dataset
+    """
+
+    def reshape(self, bottom, top):
+        # load image + label image pair
+        self.data = self.load_image(self.indices[self.idx])
+        self.label = self.load_label(self.indices[self.idx])
+        # obfuscated label image
+        self.label = self.obfuscate_label(self.label)
+        # reshape tops to fit (leading 1 is for batch dimension)
+        top[0].reshape(1, *self.data.shape)
+        top[1].reshape(1, *self.label.shape)
 
 
     def obfuscate_label(self, label):
