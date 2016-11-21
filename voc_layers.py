@@ -154,7 +154,7 @@ class PartialVOCSegDataLayer(VOCSegDataLayer):
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
 
-    def ignore_label(label):
+    def ignore_label(self, label):
         """
         Ignore labels that do not belong to the last 5 classes
         """
@@ -316,7 +316,7 @@ class PartialSBDDSegDataLayer(VOCSegDataLayer):
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
 
-    def ignore_label(label):
+    def ignore_label(self, label):
         """
         Ignore labels that do not belong to the last 5 classes
         """
