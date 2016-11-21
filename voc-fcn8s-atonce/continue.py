@@ -22,4 +22,4 @@ val = np.loadtxt('../data/pascal-obfuscated/seg11valid.txt', dtype=str)
 
 for _ in range(75):
     solver.step(4000)
-    #score.seg_tests(solver, False, val, layer='score')
+    score.seg_tests(solver, False, val, layer='score')
