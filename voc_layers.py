@@ -159,6 +159,12 @@ class PartialVOCSegDataLayer(VOCSegDataLayer):
         Ignore labels that do not belong to the last 5 classes
         """
         label[np.where(label <= 15)] = 0
+        label[np.where(label == 16)] = 1
+        label[np.where(label == 17)] = 2
+        label[np.where(label == 18)] = 3
+        label[np.where(label == 19)] = 4
+        label[np.where(label == 20)] = 5
+
         return label
 
 
@@ -302,7 +308,7 @@ class ObfSBDDSegDataLayer(SBDDSegDataLayer):
         return label
 
 
-class PartialSBDDSegDataLayer(VOCSegDataLayer):
+class PartialSBDDSegDataLayer(SBDDSegDataLayer):
     """
     Keep only five classes (16, 17, 18, 19, 20) and the background (0)
     """
@@ -321,4 +327,9 @@ class PartialSBDDSegDataLayer(VOCSegDataLayer):
         Ignore labels that do not belong to the last 5 classes
         """
         label[np.where(label <= 15)] = 0
+        label[np.where(label == 16)] = 1
+        label[np.where(label == 17)] = 2
+        label[np.where(label == 18)] = 3
+        label[np.where(label == 19)] = 4
+        label[np.where(label == 20)] = 5
         return label

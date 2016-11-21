@@ -8,21 +8,21 @@ import sys
 import setproctitle
 setproctitle.setproctitle(os.path.basename(os.getcwd()))
 
-weights = '../ilsvrc-nets/vgg16-fcn.caffemodel'
+weights = '../ilsvrc-nets/vgg16-fcn-5cls.caffemodel'
 
 # init
 caffe.set_device(int(sys.argv[1]))
 caffe.set_mode_gpu()
 
 solver = caffe.SGDSolver('solver.prototxt')
-#solver.net.copy_from(weights)
+solver.net.copy_from(weights)
 
 # surgeries
 interp_layers = [k for k in solver.net.params.keys() if 'up' in k]
 surgery.interp(solver.net, interp_layers)
 
 # scoring
-val = np.loadtxt('../data/pascal-obfuscated/seg11valid.txt', dtype=str)
+val = np.loadtxt('../data/pascal-obfuscated/VOC2011/ImageSets/Segmentation/seg11valid5.txt', dtype=str)
 
 for _ in range(75):
     solver.step(4000)

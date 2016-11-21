@@ -16,7 +16,7 @@ def fcn(split):
     n = caffe.NetSpec()
     pydata_params = dict(split=split, mean=(104.00699, 116.66877, 122.67892),
             seed=1337)
-    if split == 'train':
+    if split.startswith('train'):
         pydata_params['sbdd_dir'] = '../data/sbdd/dataset'
         pylayer = 'PartialSBDDSegDataLayer'
     else:
@@ -102,10 +102,10 @@ def fcn(split):
 
 def make_net():
     with open('train.prototxt', 'w') as f:
-        f.write(str(fcn('train')))
+        f.write(str(fcn('train5')))
 
     with open('val.prototxt', 'w') as f:
-        f.write(str(fcn('seg11valid')))
+        f.write(str(fcn('seg11valid5')))
 
 if __name__ == '__main__':
     make_net()
