@@ -134,9 +134,31 @@ class ObfVOCSegDataLayer(VOCSegDataLayer):
 
     def obfuscate_label(self, label):
         """
-        Obfuscate label image with only two classes: foreground and background
+        Obfuscate label image with only two classes: foreground (1)
+        and background (0)
         """
         label[np.all([label != 0, label != 255], axis=0)] = 1
+        return label
+
+class PartialVOCSegDataLayer(VOCSegDataLayer):
+    """
+    Keep only five classes (16, 17, 18, 19, 20) and the background (0)
+    """
+    def reshape(self, bottom, top):
+        # load image + label image pair
+        self.data = self.load_image(self.indices[self.idx])
+        self.label = self.load_label(self.indices[self.idx])
+        # ignore the first 15 classes
+        self.label = self.ignore_label(self.label)
+        # reshape tops to fit (leading 1 is for batch dimension)
+        top[0].reshape(1, *self.data.shape)
+        top[1].reshape(1, *self.label.shape)
+
+    def ignore_label(label):
+        """
+        Ignore labels that do not belong to the last 5 classes
+        """
+        label[np.where(label <= 15)] = 0
         return label
 
 
@@ -280,3 +302,23 @@ class ObfSBDDSegDataLayer(SBDDSegDataLayer):
         return label
 
 
+class PartialSBDDSegDataLayer(VOCSegDataLayer):
+    """
+    Keep only five classes (16, 17, 18, 19, 20) and the background (0)
+    """
+    def reshape(self, bottom, top):
+        # load image + label image pair
+        self.data = self.load_image(self.indices[self.idx])
+        self.label = self.load_label(self.indices[self.idx])
+        # ignore the first 15 classes
+        self.label = self.ignore_label(self.label)
+        # reshape tops to fit (leading 1 is for batch dimension)
+        top[0].reshape(1, *self.data.shape)
+        top[1].reshape(1, *self.label.shape)
+
+    def ignore_label(label):
+        """
+        Ignore labels that do not belong to the last 5 classes
+        """
+        label[np.where(label <= 15)] = 0
+        return label
