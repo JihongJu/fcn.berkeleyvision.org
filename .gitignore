@@ -3,6 +3,9 @@ data
 *.caffemodel
 *.solversate
 *.ipynb
+*.png
+*.jpg
+*.mat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
