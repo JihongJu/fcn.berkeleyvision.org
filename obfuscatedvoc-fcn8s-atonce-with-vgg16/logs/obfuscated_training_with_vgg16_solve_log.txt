@@ -2448,6 +2448,7 @@ I1117 10:24:16.873039  7615 net.cpp:283] Network initialization done.
 I1117 10:24:16.873203  7615 solver.cpp:60] Solver scaffolding done.
 [libprotobuf WARNING google/protobuf/io/coded_stream.cc:505] Reading dangerously large protocol message.  If the message turns out to be larger than 2147483647 bytes, parsing will be halted for security reasons.  To increase the limit (or to disable these warnings), see CodedInputStream::SetTotalBytesLimit() in google/protobuf/io/coded_stream.h.
 [libprotobuf WARNING google/protobuf/io/coded_stream.cc:78] The total number of bytes read was 537093588
+I1117 10:24:19.310672  7615 solver.cpp:165] Solving FCN8s-atonce
 I1117 10:24:19.310672  7615 solver.cpp:228] Iteration 0, loss = 319447
 I1117 10:24:19.310744  7615 solver.cpp:244]     Train net output #0: loss = 319447 (* 1 = 319447 loss)
 I1117 10:24:19.310756  7615 sgd_solver.cpp:106] Iteration 0, lr = 1e-10

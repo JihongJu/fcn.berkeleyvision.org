@@ -2446,6 +2446,7 @@ I1119 12:20:38.974329 24038 net.cpp:228] data does not need backward computation
 I1119 12:20:38.974334 24038 net.cpp:270] This network produces output loss
 I1119 12:20:38.974375 24038 net.cpp:283] Network initialization done.
 I1119 12:20:38.974581 24038 solver.cpp:60] Solver scaffolding done.
+I1119 12:20:39.334002 24038 solver.cpp:228] Solving FCN-8s-atonce
 I1119 12:20:39.334002 24038 solver.cpp:228] Iteration 0, loss = 47441.9
 I1119 12:20:39.334061 24038 solver.cpp:244]     Train net output #0: loss = 47441.9 (* 1 = 47441.9 loss)
 I1119 12:20:39.334074 24038 sgd_solver.cpp:106] Iteration 0, lr = 1e-10
