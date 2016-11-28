@@ -20,6 +20,9 @@ def transplant(new_net, net, suffix=''):
         if p_new not in new_net.params:
             print 'dropping', p
             continue
+        if (not p_new.startswith('conv')) and (not p_new.startswith('fc')):
+            print 'dropping', p
+            continue
         for i in range(len(net.params[p])):
             if i > (len(new_net.params[p_new]) - 1):
                 print 'dropping', p, i

@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 
-class voc:
+class VOC:
     def __init__(self, data_path):
         # data_path is /path/to/PASCAL/VOC2011
         self.dir = data_path
@@ -34,7 +34,7 @@ class voc:
         label = label[np.newaxis, ...]
         return label
 
-    def palette(self, label_im):
+    def transfer(self, label_im):
         '''
         Transfer the VOC color palette to an output mask for visualization.
         '''
