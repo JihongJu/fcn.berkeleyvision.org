@@ -140,6 +140,21 @@ class ObfVOCSegDataLayer(VOCSegDataLayer):
         label[np.all([label != 0, label != 255], axis=0)] = 1
         return label
 
+class RandVOCSegDataLayer(VOCSegDataLayer):
+    """
+    Randomizing the foreground segments labels
+    """
+    def load_label(self, idx):
+        """
+        Load label image as 1 x height x width integer array of label indices.
+        The leading singleton dimension is required by the loss.
+        """
+        im = Image.open('{}/RandomSegmentationClass/{}.png'.format(self.voc_dir, idx))
+        label = np.array(im, dtype=np.uint8)
+        label = label[np.newaxis, ...]
+        return label
+
+
 class PartialVOCSegDataLayer(VOCSegDataLayer):
     """
     Keep only five classes (16, 17, 18, 19, 20) and the background (0)
@@ -288,7 +303,6 @@ class ObfSBDDSegDataLayer(SBDDSegDataLayer):
     """
     Obfuscate the class labels for the SBDD dataset
     """
-
     def reshape(self, bottom, top):
         # load image + label image pair
         self.data = self.load_image(self.indices[self.idx])
@@ -305,6 +319,38 @@ class ObfSBDDSegDataLayer(SBDDSegDataLayer):
         Obfuscate label image with only two classes: foreground and background
         """
         label[np.all([label != 0, label != 255], axis=0)] = 1
+        return label
+
+
+class RandSBDDSegDataLayer(SBDDSegDataLayer):
+    """
+    Randomizing the foreground segments labels
+    """
+    def load_label(self, idx):
+        """
+        Load label image as 1 x height x width integer array of label indices.
+        The leading singleton dimension is required by the loss.
+        """
+        import scipy.io
+        mat = scipy.io.loadmat('{}/randcls/{}.mat'.format(self.sbdd_dir, idx))
+        label = mat['RANDcls'][0]['Segmentation'][0].astype(np.uint8)
+        label = label[np.newaxis, ...]
+        return label
+
+
+class CatSBDDSegDataLayer(SBDDSegDataLayer):
+    """
+    Categorizing the foreground segments labels
+    """
+    def load_label(self, idx):
+        """
+        Load label image as 1 x height x width integer array of label indices.
+        The leading singleton dimension is required by the loss.
+        """
+        import scipy.io
+        mat = scipy.io.loadmat('{}/catcls/{}.mat'.format(self.sbdd_dir, idx))
+        label = mat['CATcls'][0]['Segmentation'][0].astype(np.uint8)
+        label = label[np.newaxis, ...]
         return label
 
 
