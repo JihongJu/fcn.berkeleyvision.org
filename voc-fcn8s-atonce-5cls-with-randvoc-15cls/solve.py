@@ -8,7 +8,7 @@ import sys
 import setproctitle
 setproctitle.setproctitle(os.path.basename(os.getcwd()))
 
-weights = '../voc-nets/obfuscated_sbdd_15cls_from_scratch_5cls_2.caffemodel'
+weights = '../voc-nets/rand_sbdd_15cls_from_scratch_5cls.caffemodel'
 
 # init
 caffe.set_device(int(sys.argv[1]))
