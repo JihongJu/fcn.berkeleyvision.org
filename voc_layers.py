@@ -155,6 +155,17 @@ class RandVOCSegDataLayer(VOCSegDataLayer):
         return label
 
 
+class CatVOCSegDataLayer(VOCSegDataLayer):
+    """
+    Categorize the foreground segments labels
+    """
+    def load_label(self, idx):
+        im = Image.open('{}/SegmentationCategory/{}.png'.format(self.voc_dir, idx))
+        label = np.array(im, dtype=np.uint8)
+        label = label[np.newaxis, ...]
+        return label
+
+
 class PartialVOCSegDataLayer(VOCSegDataLayer):
     """
     Keep only five classes (16, 17, 18, 19, 20) and the background (0)
@@ -299,6 +310,24 @@ class SBDDSegDataLayer(caffe.Layer):
         return label
 
 
+class IncSBDDSegDataLayer(SBDDSegDataLayer):
+    """
+    Incomplete segmentation class layer 20% object missing rate
+    """
+    def load_label(self, idx):
+        """
+        Load label image as 1 x height x width integer array of label indices.
+        The leading singleton dimension is required by the loss.
+        """
+        import scipy.io
+        mat = scipy.io.loadmat('{}/inccls/{}.mat'.format(self.sbdd_dir, idx))
+        label = mat['INCcls'][0]['Segmentation'][0].astype(np.uint8)
+        label = label[np.newaxis, ...]
+        return label
+
+
+
+
 class ObfSBDDSegDataLayer(SBDDSegDataLayer):
     """
     Obfuscate the class labels for the SBDD dataset
@@ -379,3 +408,4 @@ class PartialSBDDSegDataLayer(SBDDSegDataLayer):
         label[np.where(label == 19)] = 4
         label[np.where(label == 20)] = 5
         return label
+
