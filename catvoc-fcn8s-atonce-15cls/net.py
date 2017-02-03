@@ -21,7 +21,7 @@ def fcn(split):
         pylayer = 'CatSBDDSegDataLayer'
     else:
         pydata_params['voc_dir'] = '../data/pascal-obfuscated/VOC2011'
-        pylayer = 'VOCSegDataLayer'
+        pylayer = 'CatVOCSegDataLayer'
     n.data, n.label = L.Python(module='voc_layers', layer=pylayer,
             ntop=2, param_str=str(pydata_params))
 
