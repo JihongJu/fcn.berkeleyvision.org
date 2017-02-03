@@ -13,10 +13,10 @@ parser.add_argument('--tp', help='target prototxt')
 parser.add_argument('--sc', help='sorce caffemodel')
 parser.add_argument('--tc', help='target caffemodel')
 args = parser.parse_args()
-source_prototxt = args['--sp']
-target_prototxt = args['--tp']
-source_caffemodel = args['--sc']
-target_caffemodel = args['--tc']
+source_prototxt = args.sp
+target_prototxt = args.tp
+source_caffemodel = args.sc
+target_caffemodel = args.tc
 
 # Load the original network and extract the fully connected layers' parameters.
 base_net = caffe.Net(source_prototxt,
